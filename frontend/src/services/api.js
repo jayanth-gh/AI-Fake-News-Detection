@@ -1,10 +1,26 @@
 import axios from 'axios';
 
-const isLocalDev = typeof window !== 'undefined' && ['localhost', '127.0.0.1'].includes(window.location.hostname);
-const fallbackBaseURL = isLocalDev ? '/api' : 'https://true-sight-ai.onrender.com/api';
+const getBaseURL = () => {
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL;
+  }
+
+  if (typeof window !== 'undefined') {
+    const host = window.location.hostname;
+    if (['localhost', '127.0.0.1'].includes(host)) {
+      return '/api';
+    }
+
+    if (host.includes('tru-sight-ai') || host.includes('true-sight-ai')) {
+      return 'https://true-sight-ai.onrender.com/api';
+    }
+  }
+
+  return 'https://true-sight-ai.onrender.com/api';
+};
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || fallbackBaseURL,
+  baseURL: getBaseURL(),
 });
 
 api.interceptors.request.use(
