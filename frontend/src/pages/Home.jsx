@@ -36,10 +36,13 @@ const Home = () => {
       }
       setResult(res.data);
     } catch (err) {
+      const detail = err.response?.data?.detail || err.message || 'An error occurred while analyzing.';
       if (err.response?.status === 503) {
          setError("Service temporarily unavailable. Our verification APIs might be down.");
+      } else if (err.response?.status === 401) {
+         setError('Please log in again to verify content.');
       } else {
-         setError(err.response?.data?.detail || 'An error occurred while analyzing.');
+         setError(detail);
       }
     } finally {
       setLoading(false);
