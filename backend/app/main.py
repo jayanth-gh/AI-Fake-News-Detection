@@ -12,7 +12,10 @@ app = FastAPI(title="Fake News Detection System API", version="1.0.0")
 # Setup CORS to allow React Frontend to communicate
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # For local development
+    allow_origins=[
+        "http://localhost:5173",
+        "https://tru-sight-ai.onrender.com",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
