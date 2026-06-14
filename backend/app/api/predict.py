@@ -25,7 +25,7 @@ from app.db import models
 from app.schemas import schemas
 from app.api.auth import get_current_user
 
-from duckduckgo_search import DDGS
+from ddgs import DDGS
 import google.generativeai as genai
 from dotenv import load_dotenv
 
