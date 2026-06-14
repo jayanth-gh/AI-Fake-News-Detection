@@ -13,3 +13,4 @@ joblib
 eli5
 google-generativeai==0.5.3
 pytesseract==0.3.10
+pillow
