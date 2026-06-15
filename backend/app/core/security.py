@@ -10,11 +10,24 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
+
+def normalize_password_for_hashing(password: str) -> str:
+    if not isinstance(password, str):
+        password = str(password)
+    encoded = password.encode("utf-8")
+    if len(encoded) > 72:
+        return encoded[:72].decode("utf-8", "ignore")
+    return password
+
+
 def verify_password(plain_password, hashed_password):
-    return pwd_context.verify(plain_password, hashed_password)
+    normalized_password = normalize_password_for_hashing(plain_password)
+    return pwd_context.verify(normalized_password, hashed_password)
+
 
 def get_password_hash(password):
-    return pwd_context.hash(password)
+    normalized_password = normalize_password_for_hashing(password)
+    return pwd_context.hash(normalized_password)
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode = data.copy()

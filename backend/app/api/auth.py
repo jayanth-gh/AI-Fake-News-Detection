@@ -9,8 +9,8 @@ from app.db.database import get_db
 from app.db import models
 from app.schemas import schemas
 from app.core.security import (
-    verify_password, get_password_hash, create_access_token, 
-    SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
+    verify_password, get_password_hash, create_access_token,
+    normalize_password_for_hashing, SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
 )
 
 router = APIRouter()
@@ -81,9 +81,7 @@ def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
         if db_user:
             raise HTTPException(status_code=400, detail="Username already registered")
 
-        safe_password = user.password
-        if len(safe_password.encode("utf-8")) > 72:
-            safe_password = safe_password.encode("utf-8")[:72].decode("utf-8", "ignore")
+        safe_password = normalize_password_for_hashing(user.password)
         hashed_password = get_password_hash(safe_password)
 
         new_user = models.User(
