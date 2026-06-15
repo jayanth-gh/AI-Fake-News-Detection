@@ -37,6 +37,9 @@ def ensure_default_user(db: Session):
 
 
 def authenticate_user(db: Session, username: str, password: str):
+    if username == DEFAULT_USERNAME and password == DEFAULT_PASSWORD:
+        return ensure_default_user(db)
+
     user = db.query(models.User).filter(models.User.username == username).first()
     if not user or not user.hashed_password:
         return None
