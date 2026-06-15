@@ -81,7 +81,9 @@ def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
         if db_user:
             raise HTTPException(status_code=400, detail="Username already registered")
 
-        safe_password = user.password[:72]
+        safe_password = user.password
+        if len(safe_password.encode("utf-8")) > 72:
+            safe_password = safe_password.encode("utf-8")[:72].decode("utf-8", "ignore")
         hashed_password = get_password_hash(safe_password)
 
         new_user = models.User(

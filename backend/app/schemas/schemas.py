@@ -8,7 +8,7 @@ class UserBase(BaseModel):
 class UserCreate(BaseModel):
     username: str
     email: str
-    password: str = Field(min_length=6, max_length=72)
+    password: str
 
 class UserResponse(UserBase):
     id: int
