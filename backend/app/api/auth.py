@@ -1,3 +1,4 @@
+import os
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
@@ -15,6 +16,24 @@ from app.core.security import (
 router = APIRouter()
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/auth/login")
+
+DEFAULT_USERNAME = os.getenv("DEFAULT_USERNAME", "demo")
+DEFAULT_PASSWORD = os.getenv("DEFAULT_PASSWORD", "demo1234")
+
+
+def ensure_default_user(db: Session):
+    existing_user = db.query(models.User).filter(models.User.username == DEFAULT_USERNAME).first()
+    if existing_user:
+        return existing_user
+
+    new_user = models.User(
+        username=DEFAULT_USERNAME,
+        hashed_password=get_password_hash(DEFAULT_PASSWORD),
+    )
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    return new_user
 
 
 def authenticate_user(db: Session, username: str, password: str):
