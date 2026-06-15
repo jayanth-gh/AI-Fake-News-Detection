@@ -94,10 +94,12 @@ def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
         db.refresh(new_user)
         return new_user
     except HTTPException:
+        db.rollback()
         raise
     except Exception as exc:
+        db.rollback()
         print(f"Registration failed: {exc}")
-        raise HTTPException(status_code=500, detail="Registration failed. Please try again later.") from exc
+        raise HTTPException(status_code=500, detail=f"Registration failed: {exc}") from exc
 
 
 @router.post("/login", response_model=schemas.Token)
